@@ -1,0 +1,14 @@
+---
+# defaults file for config-disconnected-OLM
+openshift_cli: 'oc'
+ansible_name_module: 'config-disconnected-OLM'
+ocp_cluster_console_port: 6443
+staging_dir: '/tmp'
+disconnected_operatorhub_config: 'operatorhub-config.yml'
+disconnected_catalog_source_config: 'catalog-source-config.yml'
+operator_catalog_name: 'redhat-operator-catalog'
+local_repository: 'openshift4/redhat-operators'
+operator_catalog_index: 'redhat-operator-index'
+operator_catalog_index_tag: 'v4.6'
+operator_catalog_publisher: 'Red Hat'
+
