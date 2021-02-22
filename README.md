@@ -22,9 +22,13 @@ Role Variables
 - disconnected_catalog_source_config: The name of the processed catalag source yaml config (default to 'catalog-source-config.yml')
 - operator_image_content_source_file: The name the Image Content Source config for operators images in the disconnected registry. 
 - local_repository: The name of repository where the operator images are stored in the disconnected registry (default to 'openshift4/redhat-operators')
-- operator_catalog_index: The name of the operator index in the disconnected registry (default to 'redhat-operator-index')
-- operator_catalog_index_tag: The tag of the operator index in the disconnected registry (default to 'v4.6')
-- operator_catalog_publisher: The name of the publish of the operator catalog source (default to 'Red Hat')
+- operator_catalogs_to_deploy: The structure containing information about the various operator indices to deploy.These valued as used to generate the catalog source yaml file and the Image Content source file to use for the catalog.
+   - catalog_name: The name of the catalog.
+   - catalog_index: The name of the operator index in the disconnected registry. 
+   - catalog_index_tag: The tag of the operator index in the disconnected registry.
+   - catalog_publisher: The name of the catalog publisher.
+   - content_source_file: The fully qualified location of the image content source policy file for the catalog
+   - mirror: Whether the catalog need to be deployed or not. 
 
 
 Dependencies
@@ -53,6 +57,21 @@ Including an example of how to use your role (for instance, with variables passe
         operator_catalog_index: 'redhat-operator-index'
         operator_catalog_index_tag: 'v4.6'
         operator_catalog_publisher: 'example-cluster'
+        operator_catalogs_to_deploy:
+          redhat-operators:
+            catalog_name: 'custom-redhat-operator-catalog'
+            catalog_index: 'redhat-operator-index'
+            catalog_index_tag: 'v4.6'
+            catalog_publisher: 'redhat'
+            content_source_file: ''  ##'<path/to/imageContentSourcePolicy-artifactory.yaml>'
+            mirror: "true"
+          community-operators:
+            catalog_name: 'community-redhat-operator-catalog'
+            catalog_index: 'community-operator-index'
+            catalog_index_tag: 'latest'
+            catalog_publisher: 'community'
+            content_source_file: ''  ##'<path/to/imageContentSourcePolicy-artifactory.yaml>'
+            mirror: "true"
       roles:
          - { role: config-disconnected-OLM }
 
