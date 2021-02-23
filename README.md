@@ -29,6 +29,11 @@ Role Variables
    - catalog_publisher: The name of the catalog publisher.
    - content_source_file: The fully qualified location of the image content source policy file for the catalog
    - mirror: Whether the catalog need to be deployed or not. 
+- operators_to_deploy: The structure containing information about the various operators to deploy.These valued as used to generate the OperatorGroup and operator Subscription objects.
+   - catalog_name: The name of the catalog the operator is deployed from.
+   - group_name: The name of the operator group object this operator is part of.
+   - target_namespace: The namespace to deploy the operator into.
+   - target_namespace_description: The description of the namespace to deploy the operator into.
 
 
 Dependencies
@@ -74,6 +79,28 @@ Including an example of how to use your role (for instance, with variables passe
             mirror: "true"
       roles:
          - { role: config-disconnected-OLM }
+
+    - hosts: localhost 
+      vars:
+        registry_host_fqdn: 'registry.example.com'
+        local_repository: 'openshift4/redhat-operators'
+        ocp_cluster_user_user: 'registry-example-user'
+        ocp_cluster_user_password: 'registry-example-password'
+        ocp_cluster_console_url: 'api.ocp-cluster.example.com'
+        ocp_cluster_console_port: '6443'
+        staging_dir: '/tmp'
+        operators_to_deploy:
+          group-sync-operator:
+            group_name: 'group-sync-operator-group'
+            catalog_name: 'community-redhat-operator-catalog'
+            target_namespace: 'group-sync-operator'
+            target_namespace_description: 'group-sync-operator'
+
+      tasks:
+         - name: Import Operator Deployment tasks
+           import_role:
+             name: config-disconnected-OLM
+             task_from: post-deploy-olm-operators.yml 
 
 License
 -------
