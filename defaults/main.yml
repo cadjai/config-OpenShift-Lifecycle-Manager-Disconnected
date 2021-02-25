@@ -37,3 +37,42 @@ operator_catalogs_to_deploy:
     content_source_file: ''  ##'<path/to/imageContentSourcePolicy-artifactory.yaml>'
     mirror: "false"
 
+operators_to_deploy:
+  group-sync-operator:
+    group_name: 'group-sync-operator-group'
+    catalog_name: 'community-redhat-operator-catalog'
+    sub_channel: '4.6'
+    target_namespace: 'group-sync-operator'
+    target_namespace_description: 'group-sync-operator'
+    deploy: 'false'
+    create_namespace: 'false'
+    create_catalog: 'false'
+    create_catalog_group: 'false'
+    index_image: 'redhat-operator-index'
+    index_image_tag: 'v4.6'
+
+  file-integrity-operator:
+    group_name: 'file-integrity-operator-group'
+    catalog_name: 'custom-redhat-operator-catalog'
+    sub_channel: '4.6'
+    target_namespace: 'openshift-file-integrity'
+    target_namespace_description: 'openshift-file-integrity'
+    deploy: 'false'
+    create_namespace: 'false'
+    create_catalog: 'false'
+    create_catalog_group: 'true'
+    index_image: 'redhat-operator-index'
+    index_image_tag: 'v4.6'
+
+  compliance-operator:
+    group_name: 'compliance-operator-group'
+    catalog_name: 'custom-redhat-operator-catalog'
+    sub_channel: '4.6'
+    target_namespace: 'openshift-compliance'
+    target_namespace_description: 'openshift-compliance'
+    deploy: 'false'
+    create_namespace: 'false'
+    create_catalog: 'false'
+    create_catalog_group: 'true'
+    index_image: 'redhat-operator-index'
+    index_image_tag: 'v4.6'

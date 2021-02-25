@@ -34,6 +34,12 @@ Role Variables
    - group_name: The name of the operator group object this operator is part of.
    - target_namespace: The namespace to deploy the operator into.
    - target_namespace_description: The description of the namespace to deploy the operator into.
+   - deploy:  Whether to deploy the operator or not. Only being used so that the paybook can be reused without affecting previously deployed operators.
+   - create_namespace: Whether to create a namespace for the operator or not. Usually the first time this should be set to true if it is a namespaced operator.
+   - create_catalog:  Whether to create a dedicated CatalogSource for the operator.
+   - create_catalog_group: Whether to create an OperatorGroup config file for the operator.
+   - index_image:  The index image to use if a dedicated index is being created for this operator.
+   - index_image_tag: The index tag if a dedicated index is being created for this operator.
 
 
 Dependencies
@@ -95,6 +101,12 @@ Including an example of how to use your role (for instance, with variables passe
             catalog_name: 'community-redhat-operator-catalog'
             target_namespace: 'group-sync-operator'
             target_namespace_description: 'group-sync-operator'
+            deploy: 'true'
+            create_namespace: 'true'
+            create_catalog: 'false'
+            create_catalog_group: 'true'
+            index_image: 'redhat-operator-index'
+            index_image_tag: 'v4.6
 
       tasks:
          - name: Import Operator Deployment tasks

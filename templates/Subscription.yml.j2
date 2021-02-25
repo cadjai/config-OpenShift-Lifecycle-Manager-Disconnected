@@ -4,7 +4,7 @@ metadata:
   name: {{ operator_name }}
   namespace: {{ operator_target_namespace | d('openshift-operators') }}
 spec:
-  channel: alpha
+  channel: "{{ operator_sub_channel | d('alpha') }}" 
   name: {{ operator_name }}
   source: {{ operator_catalog_name }}
   sourceNamespace: openshift-marketplace
