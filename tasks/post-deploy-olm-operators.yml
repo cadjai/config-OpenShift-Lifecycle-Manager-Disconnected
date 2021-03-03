@@ -24,7 +24,7 @@
     ##### Adding this to bypass restrictions on creating project with names starting with openshift  #####
     - name: '{{ ansible_name_module }} | Deploy Operators | Create Operator Namespace'
       command: >
-        {{ openshift_cli }} create namespace '{{ item.value.target_namespace }}'
+        {{ openshift_cli }} create namespace '{{ item.value.deploy_namespace }}'
       failed_when: "operator_ns_created.rc >=1 and not ' already exists' in operator_ns_created.stderr"
       with_dict: "{{ operators_to_deploy }}"
       loop_control:
@@ -34,15 +34,16 @@
         - item.value.group_name is defined and item.value.group_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
         - item.value.create_namespace is defined and item.value.create_namespace | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
-        - "'openshift' in item.value.target_namespace"
+        - "'openshift' in item.value.deploy_namespace"
       register: operator_ns_created
 
     - name: '{{ ansible_name_module }} | Deploy Operators | Create Operator Namespace'
       command: >
-        {{ openshift_cli }} new-project '{{ item.value.target_namespace }}' \
-          --display-name='{{ item.value.target_namespace_description }}' \
-          --description='{{ item.value.target_namespace_description }}'
+        {{ openshift_cli }} new-project '{{ item.value.deploy_namespace }}' \
+          --display-name='{{ item.value.deploy_namespace_description }}' \
+          --description='{{ item.value.deploy_namespace_description }}'
       failed_when: "operator_ns_created.rc >=1 and not ' already exists' in operator_ns_created.stderr"
       with_dict: "{{ operators_to_deploy }}"
       loop_control:
@@ -51,13 +52,14 @@
         - item.key is defined and item.key != ""
         - item.value.group_name is defined and item.value.group_name != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
-        - item.value.target_namespace_description is defined and item.value.target_namespace_description != ""
-        - "not 'openshift' in item.value.target_namespace"
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
+        - item.value.deploy_namespace_description is defined and item.value.deploy_namespace_description != ""
+        - "not 'openshift' in item.value.deploy_namespace"
       register: operator_ns_created
 
     - name: '{{ ansible_name_module }} | Deploy Operators | Check if Operator group already exist'
       shell: >
-        {{ openshift_cli }} get OperatorGroup --all-namespaces --no-headers | grep '{{ item.value.target_namespace }}' | grep  '{{ item.value.group_name }}'
+        {{ openshift_cli }} get OperatorGroup --all-namespaces --no-headers | grep '{{ item.value.deploy_namespace }}' | grep  '{{ item.value.group_name }}'
       ignore_errors: yes
       with_dict:
         - "{{ operators_to_deploy }}"
@@ -65,8 +67,9 @@
         - item.key is defined and item.key != ""
         - item.value.group_name is defined and item.value.group_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
-        - item.value.target_namespace_description is defined and item.value.target_namespace_description != ""
+        - item.value.deploy_namespace_description is defined and item.value.deploy_namespace_description != ""
       register: operator_group_exist
 
     - name: '{{ ansible_name_module }} | Deploy Operators | Check if Operator group already exist'
@@ -87,12 +90,14 @@
         - item.key is defined and item.key != ""
         - item.value.group_name is defined and item.value.group_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
-        - item.value.target_namespace_description is defined and item.value.target_namespace_description != ""
+        - item.value.deploy_namespace_description is defined and item.value.deploy_namespace_description != ""
         - item.value.create_catalog_group is defined and item.value.create_catalog_group | bool
         - op_group_exist[item.key] is defined and op_group_exist[item.key] | bool
       vars: 
         operator_group_name: "{{ item.value.group_name }}"
+        operator_deploy_namespace: "{{ item.value.deploy_namespace }}"
         operator_target_namespace: "{{ item.value.target_namespace }}"
         operator_name: "{{ item.key }}"
       register: op_csc_copied
@@ -106,8 +111,9 @@
         - item.key is defined and item.key != ""
         - item.value.group_name is defined and item.value.group_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
-        - item.value.target_namespace_description is defined and item.value.target_namespace_description != ""
+        - item.value.deploy_namespace_description is defined and item.value.deploy_namespace_description != ""
         - item.value.create_catalog_group is defined and item.value.create_catalog_group | bool
         - op_group_exist[item.key] is defined and op_group_exist[item.key] | bool
       register: op_csc_deployed
@@ -122,10 +128,12 @@
         - item.key is defined and item.key != ""
         - item.value.catalog_name is defined and item.value.catalog_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
         - item.value.create_catalog is defined and item.value.create_catalog | bool
       vars:
         operator_catalog_name: "{{ item.value.catalog_name }}"
+        operator_deploy_namespace: "{{ item.value.deploy_namespace }}"
         operator_target_namespace: "{{ item.value.target_namespace }}"
         operator_name: "{{ item.key }}"
         operator_catalog_index: "{{ item.value.index_image | d(omit) }}"
@@ -141,6 +149,7 @@
         - item.key is defined and item.key != ""
         - item.value.catalog_name is defined and item.value.catalog_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
         - item.value.create_catalog is defined and item.value.create_catalog | bool
       register: op_sub_deployed
@@ -155,10 +164,12 @@
         - item.key is defined and item.key != ""
         - item.value.catalog_name is defined and item.value.catalog_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
-        - item.value.target_namespace_description is defined and item.value.target_namespace_description != ""
+        - item.value.deploy_namespace_description is defined and item.value.deploy_namespace_description != ""
       vars: 
         operator_catalog_name: "{{ item.value.catalog_name }}"
+        operator_deploy_namespace: "{{ item.value.deploy_namespace }}"
         operator_target_namespace: "{{ item.value.target_namespace }}"
         operator_name: "{{ item.key }}"
       register: op_sub_copied
@@ -172,7 +183,8 @@
         - item.key is defined and item.key != ""
         - item.value.catalog_name is defined and item.value.catalog_name != ""
         - item.value.deploy is defined and item.value.deploy | bool
+        - item.value.deploy_namespace is defined and item.value.deploy_namespace != ""
         - item.value.target_namespace is defined and item.value.target_namespace != ""
-        - item.value.target_namespace_description is defined and item.value.target_namespace_description != ""
+        - item.value.deploy_namespace_description is defined and item.value.deploy_namespace_description != ""
       register: op_sub_deployed
 
