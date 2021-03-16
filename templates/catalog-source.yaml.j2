@@ -9,7 +9,7 @@ spec:
   image: {{ registry_host_fqdn }}:{{ registry_host_port }}/{{ local_repository }}/redhat/{{ operator_catalog_index }}:{{ operator_catalog_index_tag }} 
 {% else %}
   image: {{ registry_host_fqdn }}/{{ local_repository }}/redhat/{{ operator_catalog_index }}:{{ operator_catalog_index_tag }} 
-(% endif %}
+{% endif %}
   displayName: {{ operator_catalog_name.replace('-', ' ') | upper }}
   publisher: {{ operator_catalog_publisher }}
   updateStrategy:
