@@ -6,7 +6,7 @@ metadata:
 spec:
   sourceType: grpc
 {% if registry_host_port is defined and registry_host_port | int > 0 %}
-  image: {{ registry_host_fqdn }}:{{ registry_host_port }}/{{ local_repository }}/redhat/{{ operator_catalog_index }}:{{ operator_catalog_index_tag }} 
+  image: {{ registry_host_fqdn }}:{{ registry_host_port }}/{{ local_repository }}/{{ operator_catalog_index }}:{{ operator_catalog_index_tag }} 
 {% else %}
   image: {{ registry_host_fqdn }}/{{ local_repository }}/redhat/{{ operator_catalog_index }}:{{ operator_catalog_index_tag }} 
 {% endif %}
