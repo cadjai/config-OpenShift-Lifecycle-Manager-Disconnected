@@ -57,13 +57,15 @@
         - item.value.mirror is defined and item.value.mirror | bool == true
         - item.value.catalog_name is defined and item.value.catalog_name != ""
         - item.value.catalog_index is defined and item.value.catalog_index != ""
-        - item.value.content_source_file is defined and item.value.content_source_file != ""c
+        - item.value.content_source_file is defined and item.value.content_source_file != ""
       register: op_ics_copied
 
     - name: '{{ ansible_name_module }} | command | Apply Operator Image Content Source'
       command: >
         {{ openshift_cli }} apply -f {{ staging_dir }}/{{ item.key }}-{{ item.value.content_source_file | basename }} 
       register: op_ics_updated
+      with_dict:
+        - "{{ operator_catalogs_to_deploy }}"
 
 - name: '{{ ansible_name_module }} | Configure Catalog Source for disconnected install'
   block:
@@ -89,3 +91,5 @@
       command: >
         {{ openshift_cli }} apply -f {{ staging_dir }}/{{ item.key }}-catalog-source-config.yml
       register: op_cs_updated
+      with_dict:
+        - "{{ operator_catalogs_to_deploy }}"
