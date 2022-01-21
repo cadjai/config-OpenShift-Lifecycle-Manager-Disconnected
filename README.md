@@ -2,6 +2,7 @@ Role Name
 =========
 
 Utility Role to help configure a disconnected OLM in a disconnected/air-gapped OpenShift Container Platform 4.6+ cluster. 
+Adding a new task file to allow deployment of multiple Image Content Source Policy and CatalogSource manifest files. It is assumed that the file are named certain way and are placed with subdirectories of where the playbook is run from so that the files can be located and use. There is a variable for the location of the files if there are not with the playbook directory. 
 
 Requirements
 ------------
@@ -41,6 +42,10 @@ Role Variables
    - index_image:  The index image to use if a dedicated index is being created for this operator.
    - index_image_tag: The index tag if a dedicated index is being created for this operator.
 
+- icsp_manifests_path: Path to the location of the ICSP files. The files are expected to be named consistently with sub directories of the provided location.
+- icsp_manifests_file: Name of the ICSP file and this has to be the same for each of the ICSP files to be processed.
+- catsrcs_manifests_path: Path to the location of the CatalogSource files. The files are expected to be named consistently with sub directories of the provided location.
+- catsrcs_manifests_file: Name of the CatalogSource file and this has to be the same for each of the CatalogSource files to be processed.
 
 Dependencies
 ------------
