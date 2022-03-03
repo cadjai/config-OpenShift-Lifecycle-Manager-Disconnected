@@ -30,35 +30,8 @@
       --insecure-skip-tls-verify=true {{ ocp_cluster_console_url }}:{{ ocp_cluster_console_port }}
   register: login_out
 
-- name: '{{ ansible_name_module }} | find |  Find all ISCP files'
-  find:
-    path: "{{ icsp_manifests_path | default('../mirror_content/', false) }}"
-    recurse: yes
-    patterns: "{{ icsp_manifests_file | default('olm-icsp.yaml', false) }}"
-  register: icsp_manifests
-
-- name: '{{ ansible_name_module }} | find |  Find all CatalogSource files'
-  find:
-    path: "{{ catsrcs_manifests_path | default('../mirror_content/', false) }}"
-    recurse: yes
-    patterns: "{{ catsrcs_manifests_file | default('catalog-source.yaml', false) }}"
-  register: catsrcs_manifests
-
-- name: '{{ ansible_name_module }} | set_fact | ICSP file paths'
-  set_fact:
-    icsp_file_paths: "{{ icsp_manifests.files | map(attribute='path') | list }}"
-  when:
-    - icsp_manifests is defined
-    - icsp_manifests.files is defined
-    - icsp_manifests.files | length > 0
-
-- name: '{{ ansible_name_module }} | set_fact | CatSrc file paths'
-  set_fact:
-    catsrcs_file_paths: "{{ catsrcs_manifests.files | map(attribute='path') | list }}"
-  when:
-    - catsrcs_manifests is defined
-    - catsrcs_manifests.files is defined
-    - catsrcs_manifests.files | length > 0
+- name: '{{ ansible_name_module }} | Find operator manifests'
+  import_tasks: fetch-operator-catalogs-and-icsp-files.yml 
 
 - name: '{{ ansible_name_module }} | command | deploy ICSP files'
   command: >
